@@ -46,8 +46,11 @@ def download_file(url, filename):
         file_size = "234MB" if 'welfake' in filename else "50-60MB"
         with st.spinner(f"Downloading {filename} (~{file_size})... This is a one-time setup and may take several minutes."):
             try:
-                # Use gdown to download the file, confirming large files
-                gdown.download(url, filename, quiet=False, fuzzy=True)
+                # --- THIS IS THE FIX ---
+                # Added 'confirm=True' to bypass the Google Drive warning for large files
+                gdown.download(url, filename, quiet=False, fuzzy=True, confirm=True)
+                # -----------------------
+
                 st.success(f"Downloaded {filename}!")
             except Exception as e:
                 st.error(f"Error downloading {filename}: {e}")
@@ -331,4 +334,3 @@ with tab4:
             
     else:
         st.error("Could not load ISOT data.")
-
