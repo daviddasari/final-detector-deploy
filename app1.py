@@ -10,6 +10,11 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 import requests
 import os
 
+# --- NEW FIX: Import the ML libraries ---
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+# ----------------------------------------
+
 # --- Config: Direct Download URLs ---
 # These are your personal Google Drive links
 TRUE_CSV_URL = "https://drive.google.com/uc?export=download&id=18yLhh9FMzgptqRfGsbruRX2qUtePExD7"
