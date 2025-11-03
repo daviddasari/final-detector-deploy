@@ -1,0 +1,17 @@
+Ignore all CSV files (since they will be downloaded)
+
+*.csv
+
+Ignore Python cache
+
+pycache/
+*.pyc
+
+Ignore Streamlit secrets
+
+.streamlit/secrets.toml
+
+Ignore virtual environments
+
+.venv/
+venv/
