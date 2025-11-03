@@ -144,9 +144,30 @@ def load_welfake_data():
     if download_file(WELFAKE_CSV_URL, WELFAKE_CSV_PATH):
         try:
             df = pd.read_csv(WELFAKE_CSV_PATH)
+            
+            # --- DEBUGGING STEP ---
+            # Print the columns pandas *thinks* it found to the app
+            st.warning(f"DEBUG: Columns found in welfake.csv: {list(df.columns)}")
+            
+            # --- NEW FIX: Intelligently find and rename columns ---
+            column_map = {}
+            for col in df.columns:
+                col_cleaned = col.lower().strip() # Clean the column name
+                if col_cleaned == 'title':
+                    column_map[col] = 'title'
+                if col_cleaned == 'label':
+                    column_map[col] = 'label'
+            
+            if 'title' in column_map.values() and 'label' in column_map.values():
+                df = df.rename(columns=column_map)
+                st.success("DEBUG: Successfully standardized 'title' and 'label' columns.")
+            # --------------------------------------------------
+
+            # Now, check if our *new* standardized column names exist
             if 'title' not in df.columns or 'label' not in df.columns:
-                st.error("`welfake.csv` is missing 'title' or 'label' columns.")
+                st.error("`welfake.csv` is missing 'title' or 'label' columns. Please check the file.")
                 return pd.DataFrame()
+                
             return df
         except Exception as e:
             st.error(f"Error loading welfake.csv: {e}")
