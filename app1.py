@@ -17,7 +17,7 @@ from sklearn.linear_model import LogisticRegression
 # ----------------------------------------
 
 # --- Config: Direct Download URLs ---
-# !!! NEW, MORE ROBUST GDOWN LINKS !!!
+# These are your personal Google Drive links
 TRUE_CSV_URL = "https://drive.google.com/uc?id=18yLhh9FMzgptqRfGsbruRX2qUtePExD7"
 FAKE_CSV_URL = "https://drive.google.com/uc?id=12WmrAYec3gEryqwpTKio8VHYhQCp7MKd"
 WELFAKE_CSV_URL = "https://drive.google.com/uc?id=1RwWBcgrJ3c1oSkw8-HOVt0o5fuHEUQZz"
@@ -211,7 +211,11 @@ with tab1:
             if user_input.strip() == "":
                 st.warning("Please enter some text to analyze.")
             else:
-                cleaned_input = clean_text(.user_input)
+                # --- THIS IS THE FIX ---
+                # Removed the extra '.' before user_input
+                cleaned_input = clean_text(user_input)
+                # -----------------------
+                
                 vectorized_input = vectorizer.transform([cleaned_input])
                 prediction = model.predict(vectorized_input)
                 probability = model.predict_proba(vectorized_input)
