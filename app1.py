@@ -17,10 +17,10 @@ from sklearn.linear_model import LogisticRegression
 # ----------------------------------------
 
 # --- Config: Direct Download URLs ---
-# These are your personal Google Drive links
-TRUE_CSV_URL = "https://drive.google.com/uc?export=download&id=18yLhh9FMzgptqRfGsbruRX2qUtePExD7"
-FAKE_CSV_URL = "https://drive.google.com/uc?export=download&id=12WmrAYec3gEryqwpTKio8VHYhQCp7MKd"
-WELFAKE_CSV_URL = "https://drive.google.com/uc?export=download&id=1RwWBcgrJ3c1oSkw8-HOVt0o5fuHEUQZz"
+# !!! NEW, MORE ROBUST GDOWN LINKS !!!
+TRUE_CSV_URL = "https://drive.google.com/uc?id=18yLhh9FMzgptqRfGsbruRX2qUtePExD7"
+FAKE_CSV_URL = "https://drive.google.com/uc?id=12WmrAYec3gEryqwpTKio8VHYhQCp7MKd"
+WELFAKE_CSV_URL = "https://drive.google.com/uc?id=1RwWBcgrJ3c1oSkw8-HOVt0o5fuHEUQZz"
 
 # Define local filenames
 TRUE_CSV_PATH = "True.csv"
@@ -46,8 +46,8 @@ def download_file(url, filename):
         file_size = "234MB" if 'welfake' in filename else "50-60MB"
         with st.spinner(f"Downloading {filename} (~{file_size})... This is a one-time setup and may take several minutes."):
             try:
-                # Use gdown to download the file
-                gdown.download(url, filename, quiet=False)
+                # Use gdown to download the file, confirming large files
+                gdown.download(url, filename, quiet=False, fuzzy=True)
                 st.success(f"Downloaded {filename}!")
             except Exception as e:
                 st.error(f"Error downloading {filename}: {e}")
@@ -211,7 +211,7 @@ with tab1:
             if user_input.strip() == "":
                 st.warning("Please enter some text to analyze.")
             else:
-                cleaned_input = clean_text(user_input)
+                cleaned_input = clean_text(.user_input)
                 vectorized_input = vectorizer.transform([cleaned_input])
                 prediction = model.predict(vectorized_input)
                 probability = model.predict_proba(vectorized_input)
