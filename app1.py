@@ -9,8 +9,9 @@ import seaborn as sns
 from sklearn.metrics import accuracy_score, confusion_matrix
 import requests
 import os
+import gdown  # Import the new library
 
-# --- NEW FIX: Import the ML libraries ---
+# --- Import the ML libraries ---
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 # ----------------------------------------
@@ -39,15 +40,14 @@ stop_words = set(stopwords.words('english'))
 def download_file(url, filename):
     """
     Downloads a file from a URL if it doesn't already exist.
+    Uses gdown to handle large Google Drive files.
     """
     if not os.path.exists(filename):
-        with st.spinner(f"Downloading {filename} (~{('234MB' if 'welfake' in filename else '50-60MB')})... This is a one-time setup."):
+        file_size = "234MB" if 'welfake' in filename else "50-60MB"
+        with st.spinner(f"Downloading {filename} (~{file_size})... This is a one-time setup and may take several minutes."):
             try:
-                with requests.get(url, stream=True) as r:
-                    r.raise_for_status()
-                    with open(filename, 'wb') as f:
-                        for chunk in r.iter_content(chunk_size=8192): 
-                            f.write(chunk)
+                # Use gdown to download the file
+                gdown.download(url, filename, quiet=False)
                 st.success(f"Downloaded {filename}!")
             except Exception as e:
                 st.error(f"Error downloading {filename}: {e}")
@@ -145,11 +145,7 @@ def load_welfake_data():
         try:
             df = pd.read_csv(WELFAKE_CSV_PATH)
             
-            # --- DEBUGGING STEP ---
-            # Print the columns pandas *thinks* it found to the app
-            st.warning(f"DEBUG: Columns found in welfake.csv: {list(df.columns)}")
-            
-            # --- NEW FIX: Intelligently find and rename columns ---
+            # --- Auto-fix column names ---
             column_map = {}
             for col in df.columns:
                 col_cleaned = col.lower().strip() # Clean the column name
@@ -160,12 +156,10 @@ def load_welfake_data():
             
             if 'title' in column_map.values() and 'label' in column_map.values():
                 df = df.rename(columns=column_map)
-                st.success("DEBUG: Successfully standardized 'title' and 'label' columns.")
             # --------------------------------------------------
 
-            # Now, check if our *new* standardized column names exist
             if 'title' not in df.columns or 'label' not in df.columns:
-                st.error("`welfake.csv` is missing 'title' or 'label' columns. Please check the file.")
+                st.error(f"`welfake.csv` is missing 'title' or 'label' columns. Found: {list(df.columns)}")
                 return pd.DataFrame()
                 
             return df
